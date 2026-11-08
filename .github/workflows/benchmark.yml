@@ -1,0 +1,52 @@
+name: 퀴즈 릴스 벤치마크
+
+# 다른 퀴즈 계정의 상위 릴스와 내 릴스 성과를 모아 보고서(artifact)로 남긴다.
+# 남의 썸네일·캡션은 공개 저장소에 커밋하지 않고, 짧게 보관되는 artifact로만 남긴다.
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check=권한 확인(아래 계정 1개) / full=benchmarks.yaml 계정 + 내 릴스 수집 / own=내 릴스만"
+        type: choice
+        options: [check, full, own]
+        default: check
+      username:
+        description: "check 모드에서 확인할 계정 아이디"
+        required: false
+        default: "bluebottle"
+
+permissions:
+  contents: read
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      PYTHONUNBUFFERED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pyyaml
+      - name: 권한 확인
+        if: inputs.mode == 'check'
+        run: |
+          python scripts/benchmark.py --check "${{ inputs.username }}" || echo "::warning::다른 계정 조회 권한 없음"
+          python scripts/benchmark.py --own || echo "::warning::내 인사이트 조회 실패"
+      - name: 수집 (다른 계정 + 내 릴스)
+        if: inputs.mode == 'full'
+        run: python scripts/benchmark.py --competitors --own
+      - name: 수집 (내 릴스만)
+        if: inputs.mode == 'own'
+        run: python scripts/benchmark.py --own
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bench
+          path: output/bench/
+          retention-days: 7
+          if-no-files-found: ignore
