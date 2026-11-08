@@ -214,3 +214,21 @@ puzzles:
     caption: |
       선 하나만 그어서 식을 완성하세요
       #퀴즈 #수학퀴즈 #두뇌게임 #창의력 #넌센스퀴즈
+
+  - id: 10
+    num: 9
+    type: exam
+    difficulty: 중
+    hook: "10초 안에 풀면\n상위 1%"
+    title: 성냥개비 1개만 옮겨서 3 + 4 = 5 완성하기
+    exam_period: 제2교시
+    exam_label: 수학 영역
+    question: 성냥개비 1개만 옮겨서 식을 올바르게 만드시오.
+    figure: match_3p4e5.svg
+    note: "※ '='는 바꿀 수 없어요"
+    blank: true
+    answer: "9 - 4 = 5"
+    explanation: "'+'의 세로 성냥을 빼서 3의 왼쪽 위에 붙이면 3은 9가 되고, +는 -가 돼요. 9 - 4 = 5. (성냥 1개 이동으로 가능한 답은 이것 하나뿐 — scripts/matchstick.py로 전수 확인)"
+    caption: |
+      성냥개비 1개만 옮겨서 식을 완성하세요
+      #퀴즈 #성냥개비퀴즈 #두뇌게임 #창의력 #수학퀴즈
