@@ -82,6 +82,7 @@ puzzles:
   #   choices     : 객관식 보기 목록 (선택, ①부터 자동 번호)
   #   blank       : true면 '답: (   )' 칸 표시 (주관식)
 #   figure      : 문제지 안에 넣을 그림 파일 (assets/figures/ 안, 예: camel.svg)
+#   note        : 식 아래 작은 안내문 (예: ※ '='는 바꿀 수 없어요)
   #   explanation : 정답 해설 (다음 날 정답 공개용)
 
   - id: 3
@@ -198,3 +199,21 @@ puzzles:
     caption: |
       낙타 혹 안에 든 것은?
       #퀴즈 #상식퀴즈 #동물상식 #낙타 #두뇌게임
+
+  - id: 9
+    num: 8
+    type: exam
+    difficulty: 중
+    hook: "선 하나만 그어서\n식을 완성하세요"
+    title: 선 하나로 2 + 2 + 2 = 244 완성하기
+    exam_period: 제2교시
+    exam_label: 수학 영역
+    question: 선을 하나만 그어 식을 완성하시오.
+    equations: ["2 + 2 + 2 = 244"]
+    note: "※ '='는 바꿀 수 없어요"
+    blank: true
+    answer: "242 + 2 = 244 (또는 2 + 242 = 244)"
+    explanation: "'+' 기호의 왼쪽 위에 비스듬한 선을 하나 그으면 숫자 '4'가 돼요. 첫 번째 +를 4로 바꾸면 242 + 2 = 244, 두 번째 +를 바꾸면 2 + 242 = 244. 둘 다 정답이에요."
+    caption: |
+      선 하나만 그어서 식을 완성하세요
+      #퀴즈 #수학퀴즈 #두뇌게임 #창의력 #넌센스퀴즈
