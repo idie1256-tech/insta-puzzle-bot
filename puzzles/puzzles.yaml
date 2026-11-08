@@ -4,7 +4,8 @@
 # 공통 항목
 #   id          : 내부 번호 (겹치면 안 됨, 게시 기록·실행에 사용)
 #   num         : 화면 배지에 보일 번호 (없으면 id). 예: num: 1 → "No.01"
-#   type        : lock(자물쇠) | sequence(수열) | rows(식·문장 나열)
+#   type        : lock(자물쇠) | sequence(수열) | rows(식·문장 나열) | exam(시험지)
+#   category    : schedule.yaml의 카테고리 이름 (요일별 순환에 사용)
 #   difficulty  : 하 | 중 | 상
 #   hook        : 릴스 맨 위 후킹 문구 (없으면 title을 크게 표시). 줄을 나누려면 "첫 줄\n둘째 줄"처럼 따옴표 안에 \n
 #   title       : 큰 제목
@@ -17,6 +18,7 @@
 puzzles:
   - id: 1
     type: lock
+    category: 자물쇠·암호
     difficulty: 중
     hook: "단서 5개로\n자물쇠를 열 수 있을까?"
     title: 자물쇠의 비밀번호는?
@@ -58,6 +60,7 @@ puzzles:
   - id: 2
     num: 1
     type: exam
+    category: 수열
     difficulty: 상
     hook: "상위 0.1%만\n맞추는 문제"
     title: 다음에 올 숫자는?
@@ -88,6 +91,7 @@ puzzles:
   - id: 3
     num: 2
     type: exam
+    category: 어휘력
     difficulty: 하
     hook: "성인 90%가\n틀리는 문제"
     title: 글피는 무슨 요일?
@@ -104,6 +108,7 @@ puzzles:
   - id: 4
     num: 3
     type: exam
+    category: 수열
     difficulty: 하
     hook: "2일까, 8일까?\n당신의 답은?"
     title: 12 ÷ 3 × (1 + 1) = ?
@@ -115,15 +120,13 @@ puzzles:
     answer: "8"
     explanation: 괄호 먼저(1 + 1 = 2), 곱셈과 나눗셈은 앞에서부터 차례로 계산해요. 12 ÷ 3 = 4, 4 × 2 = 8. 곱셈을 먼저 해서 2가 나왔다면 함정에 걸린 거예요.
     caption: |
-      🧮 12 ÷ 3 × (1 + 1) = ?
-      2일까, 8일까? 숫자 하나만 댓글로 👇
-      정답은 내일 공개합니다!
-
-      #창의력문제 #수학퀴즈 #계산문제 #두뇌게임 #퀴즈
+      12 ÷ 3 × (1 + 1) = ?
+      #퀴즈 #수학퀴즈 #계산문제 #수학논쟁 #두뇌게임
 
   - id: 5
     num: 4
     type: exam
+    category: 수열
     difficulty: 중
     hook: "정답이 2개!\n둘 다 찾을 수 있을까?"
     title: 6 + 8 = ?
@@ -135,16 +138,13 @@ puzzles:
     answer: "54 또는 32 (둘 다 정답)"
     explanation: "① a + a × b 규칙: 6 + 6 × 8 = 54 ② 앞줄 답에 더해 가는 규칙: 18 + 6 + 8 = 32. 앞의 세 줄은 두 규칙 모두 맞아요."
     caption: |
-      ➕ 1+3=4, 2+4=10, 3+5=18 … 6+8=?
-      정답이 두 개예요. 내가 찾은 답을 댓글로 👇
-      둘 다 찾으면 진짜 고수!
-      정답은 내일 공개합니다.
-
-      #창의력문제 #수학퀴즈 #규칙찾기 #두뇌게임 #퀴즈
+      1+3=4, 2+4=10, 3+5=18 … 6+8=?
+      #퀴즈 #수학퀴즈 #규칙찾기 #수열 #두뇌게임
 
   - id: 6
     num: 5
     type: exam
+    category: 넌센스
     difficulty: 하
     hook: "3초 안에\n답할 수 있을까?"
     title: 28일이 있는 달은 몇 개?
@@ -155,15 +155,13 @@ puzzles:
     answer: "12개"
     explanation: 모든 달에 28일이 있어요. 2월만 떠올렸다면 '28일까지만 있는 달'과 헷갈린 거예요.
     caption: |
-      📅 1년 중 28일이 있는 달은 모두 몇 개?
-      3초 안에 숫자 하나로 답해주세요 👇
-      정답은 내일 공개합니다!
-
-      #창의력문제 #넌센스퀴즈 #초등문제 #두뇌게임 #퀴즈
+      1년 중 28일이 있는 달은 모두 몇 개?
+      #퀴즈 #넌센스퀴즈 #상식퀴즈 #두뇌게임 #창의력
 
   - id: 7
     num: 6
     type: exam
+    category: 논리
     difficulty: 하
     hook: "1초 만에 답하면\n틀리는 문제"
     title: 2등을 앞지르면 몇 등?
@@ -174,15 +172,13 @@ puzzles:
     answer: "② 2등"
     explanation: 2등을 앞지르면 그 자리를 차지하는 거라 2등이에요. 1등이 되려면 1등을 앞질러야 해요.
     caption: |
-      🏃 달리기에서 2등을 앞질렀다면, 나는 지금 몇 등?
-      번호 하나만 댓글로 👇
-      정답은 내일 공개합니다!
-
-      #창의력문제 #넌센스퀴즈 #초등문제 #두뇌게임 #퀴즈
+      달리기에서 2등을 앞질렀다면, 나는 지금 몇 등?
+      #퀴즈 #넌센스퀴즈 #논리퀴즈 #두뇌게임 #창의력
 
   - id: 8
     num: 7
     type: exam
+    category: 상식
     difficulty: 하
     hook: "낙타 혹 안에\n든 것은?"
     title: 낙타 혹 안에 든 것은?
@@ -200,6 +196,7 @@ puzzles:
   - id: 9
     num: 8
     type: exam
+    category: 창의력
     difficulty: 중
     hook: "1%만\n맞추는 문제"
     title: 선 하나로 2 + 2 + 2 = 244 완성하기
@@ -218,6 +215,7 @@ puzzles:
   - id: 10
     num: 9
     type: exam
+    category: 성냥개비
     difficulty: 중
     hook: "10초 안에 풀면\n상위 1%"
     title: 성냥개비 1개만 옮겨서 3 + 4 = 5 완성하기
