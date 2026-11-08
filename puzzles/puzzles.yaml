@@ -110,7 +110,7 @@ puzzles:
     type: exam
     category: 수열
     difficulty: 하
-    hook: "2일까, 8일까?\n당신의 답은?"
+    hook: "수학 고수도\n틀리는 문제"
     title: 12 ÷ 3 × (1 + 1) = ?
     exam_period: 제2교시
     exam_label: 수학 영역
@@ -128,7 +128,7 @@ puzzles:
     type: exam
     category: 수열
     difficulty: 중
-    hook: "정답이 2개!\n둘 다 찾을 수 있을까?"
+    hook: "천재만\n푸는 문제"
     title: 6 + 8 = ?
     exam_period: 제2교시
     exam_label: 수학 영역
@@ -146,7 +146,7 @@ puzzles:
     type: exam
     category: 넌센스
     difficulty: 하
-    hook: "3초 안에\n답할 수 있을까?"
+    hook: "3초 만에 맞추면\n천재"
     title: 28일이 있는 달은 몇 개?
     exam_period: 초등 3학년
     exam_label: 생각하는 수학
@@ -163,7 +163,7 @@ puzzles:
     type: exam
     category: 논리
     difficulty: 하
-    hook: "1초 만에 답하면\n틀리는 문제"
+    hook: "99%가\n틀리는 문제"
     title: 2등을 앞지르면 몇 등?
     exam_period: 초등 2학년
     exam_label: 생각 키우기
