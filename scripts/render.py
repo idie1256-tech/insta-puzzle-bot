@@ -118,7 +118,8 @@ def render_feed(page, env, p, cfg, ctx, out, name):
 def render_reel(page, env, p, cfg, ctx, out, name):
     seconds = int(p.get("seconds") or cfg.get("reel_seconds", 9))
     timer = bool(cfg.get("reel_timer", False))
-    html = env.get_template("reel.html.j2").render(p=p, seconds=seconds, timer=timer, **ctx)
+    show_badge = bool(cfg.get("reel_show_badge", False))
+    html = env.get_template("reel.html.j2").render(p=p, seconds=seconds, timer=timer, show_badge=show_badge, **ctx)
     open_page(page, html, out / "html" / f"{name}_reel.html", REEL)
     o = overflow(page, "reel")
     if o[0] > 0 or o[1] > 0:

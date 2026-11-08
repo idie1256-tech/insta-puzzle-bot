@@ -6,4 +6,5 @@ footer_text: "댓글에 답을 남긴 뒤, 캡션에서 정답 확인!"
 # 릴스 설정
 reel_seconds: 9                  # 영상 길이(초). 릴스 탭에 노출되려면 5초 이상
 reel_timer: false                # true로 바꾸면 '생각할 시간' 카운트다운 막대가 나타남
+reel_show_badge: false           # true로 바꾸면 맨 위에 '창의력 문제 No.01 / 난이도' 표시
 reel_music: tick_tock.m4a        # assets/music/ 안의 배경음 파일 (직접 넣은 무료 음원으로 바꿔도 됨)

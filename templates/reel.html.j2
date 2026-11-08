@@ -18,7 +18,8 @@ html, body { margin: 0; background: var(--bg); }
 .top { display: flex; justify-content: space-between; align-items: center; }
 .badge { padding: 10px 26px; border: 2px solid var(--accent); border-radius: 999px; font-size: 30px; font-weight: 700; color: var(--accent); }
 .level { font-size: 30px; font-weight: 500; color: var(--muted); }
-.hook { margin-top: 40px; text-align: center; font-size: 84px; line-height: 1.15; color: var(--accent); word-break: keep-all; white-space: pre-line; }
+.top + .hook { margin-top: 40px; }
+.hook { margin-top: 0; text-align: center; font-size: 84px; line-height: 1.15; color: var(--accent); word-break: keep-all; white-space: pre-line; }
 .title { margin-top: 18px; text-align: center; font-size: 46px; font-weight: 900; }
 .hint { margin-top: 14px; text-align: center; font-size: 32px; font-weight: 500; color: var(--muted); }
 
@@ -66,10 +67,12 @@ html, body { margin: 0; background: var(--bg); }
 <body>
 <div class="reel" id="reel">
  <div id="safe">
+  {% if show_badge %}
   <div class="top">
     <div class="badge">창의력 문제 No.{{ "%02d"|format(p.num or p.id) }}</div>
     <div class="level">난이도 · {{ p.difficulty }}</div>
   </div>
+  {% endif %}
 
   <div class="hook display">{{ p.hook or p.title }}</div>
   {% if p.hook and p.type != "exam" %}<div class="title">{{ p.title }}</div>{% endif %}
