@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<title>창의력 문제 No.{{ "%02d"|format(p.id) }} 릴스</title>
+<title>창의력 문제 No.{{ "%02d"|format(p.num or p.id) }} 릴스</title>
 {% for href in font_links %}<link rel="stylesheet" href="{{ href }}">
 {% endfor %}
 <style>
@@ -67,7 +67,7 @@ html, body { margin: 0; background: var(--bg); }
 <div class="reel" id="reel">
  <div id="safe">
   <div class="top">
-    <div class="badge">창의력 문제 No.{{ "%02d"|format(p.id) }}</div>
+    <div class="badge">창의력 문제 No.{{ "%02d"|format(p.num or p.id) }}</div>
     <div class="level">난이도 · {{ p.difficulty }}</div>
   </div>
 

@@ -193,7 +193,7 @@ def main():
         browser = launch(pw)
         page = browser.new_page(device_scale_factor=1)
         for p in puzzles:
-            for key in ("subtitle", "hint", "question", "hook", "exam_period", "exam_no", "passage", "equations", "choices", "blank"):
+            for key in ("num", "subtitle", "hint", "question", "hook", "exam_period", "exam_no", "passage", "equations", "choices", "blank"):
                 p.setdefault(key, None)
             name = f"{p['id']:03d}"
             formats = ["reel", "feed"] if args.format == "both" else [args.format]
