@@ -187,14 +187,15 @@ def main():
     out = Path(args.out)
     (out / "html").mkdir(parents=True, exist_ok=True)
     env = Environment(loader=FileSystemLoader(ROOT / "templates"), autoescape=True, undefined=StrictUndefined)
-    ctx = {"font_links": font_stylesheets(), "accent": cfg.get("accent", "#FFC93C")}
+    ctx = {"font_links": font_stylesheets(), "accent": cfg.get("accent", "#FFC93C"),
+           "figure_base": (ROOT / "assets" / "figures").as_uri()}
 
     failed = False
     with sync_playwright() as pw:
         browser = launch(pw)
         page = browser.new_page(device_scale_factor=1)
         for p in puzzles:
-            for key in ("num", "subtitle", "hint", "question", "hook", "exam_period", "exam_no", "passage", "equations", "choices", "blank"):
+            for key in ("num", "subtitle", "hint", "question", "hook", "exam_period", "exam_no", "passage", "equations", "choices", "blank", "figure"):
                 p.setdefault(key, None)
             name = f"{p['id']:03d}"
             formats = ["reel", "feed"] if args.format == "both" else [args.format]

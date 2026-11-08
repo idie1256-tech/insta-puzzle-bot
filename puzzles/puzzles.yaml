@@ -81,6 +81,7 @@ puzzles:
   #   equations   : 크게 보여줄 식 목록 (선택)
   #   choices     : 객관식 보기 목록 (선택, ①부터 자동 번호)
   #   blank       : true면 '답: (   )' 칸 표시 (주관식)
+#   figure      : 문제지 안에 넣을 그림 파일 (assets/figures/ 안, 예: camel.svg)
   #   explanation : 정답 해설 (다음 날 정답 공개용)
 
   - id: 3
@@ -180,3 +181,20 @@ puzzles:
       정답은 내일 공개합니다!
 
       #창의력문제 #넌센스퀴즈 #초등문제 #두뇌게임 #퀴즈
+
+  - id: 8
+    num: 7
+    type: exam
+    difficulty: 하
+    hook: "낙타 혹 안에\n든 것은?"
+    title: 낙타 혹 안에 든 것은?
+    exam_period: 제3교시
+    exam_label: 과학 영역
+    question: 그림을 보고 알맞은 것을 고르시오.
+    figure: camel.svg
+    choices: [물, 지방, 근육]
+    answer: "② 지방"
+    explanation: 낙타 혹은 물이 아니라 지방 덩어리예요. 먹이가 부족할 때 이 지방을 에너지로 써요. 지방이 분해될 때 물이 조금 생기긴 하지만, 혹에 물이 고여 있는 건 아니에요.
+    caption: |
+      낙타 혹 안에 든 것은?
+      #퀴즈 #상식퀴즈 #동물상식 #낙타 #두뇌게임

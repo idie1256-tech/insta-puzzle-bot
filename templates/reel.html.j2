@@ -60,6 +60,8 @@ html, body { margin: 0; background: var(--bg); }
 .eqs { margin-top: 24px; display: flex; flex-direction: column; align-items: center; gap: 4px; font-family: 'Noto Sans KR', sans-serif; }
 .eq { font-size: 72px; font-weight: 700; letter-spacing: .05em; }
 .choices { margin-top: 28px; display: flex; flex-direction: column; gap: 16px; font-size: 46px; font-weight: 700; }
+.figure { margin-top: 24px; border: 2px solid #1A1A1A; border-radius: 6px; overflow: hidden; line-height: 0; }
+.figure img { width: 100%; height: auto; display: block; }
 .blank { margin-top: 32px; text-align: right; font-size: 46px; font-weight: 800; }
 .blank span { display: inline-block; width: 230px; }
 </style>
@@ -100,6 +102,7 @@ html, body { margin: 0; background: var(--bg); }
   <div class="paper">
     <div class="paper-head"><span class="period">{{ p.exam_period or "제1교시" }}</span><span class="subject">{{ p.exam_label }}</span></div>
     <div class="q">{{ p.exam_no or 1 }}. {{ p.question }}</div>
+    {% if p.figure %}<div class="figure"><img src="{{ figure_base }}/{{ p.figure }}" alt=""></div>{% endif %}
     {% if p.passage %}<div class="passage">{{ p.passage }}</div>{% endif %}
     {% if p.equations %}<div class="eqs">{% for e in p.equations %}<div class="eq">{{ e }}</div>{% endfor %}</div>{% endif %}
     {% if p.choices %}<div class="choices">{% for c in p.choices %}<div>{{ "①②③④⑤⑥"[loop.index0] }} {{ c }}</div>{% endfor %}</div>{% endif %}

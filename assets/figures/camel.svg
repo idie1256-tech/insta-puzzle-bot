@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 440" width="800" height="440">
+  <!-- 하늘과 사막 -->
+  <rect width="800" height="440" fill="#FFF3D6"/>
+  <circle cx="680" cy="90" r="46" fill="#FFC93C"/>
+  <path d="M0 330 C 150 290, 260 300, 400 320 C 540 340, 650 300, 800 310 L800 440 L0 440 Z" fill="#F2D59D"/>
+  <path d="M0 380 C 180 350, 330 360, 480 375 C 610 388, 700 370, 800 372 L800 440 L0 440 Z" fill="#EAC685"/>
+  <ellipse cx="420" cy="398" rx="190" ry="13" fill="#D9B06C"/>
+
+  <!-- 뒤쪽 다리 (어두운 색) -->
+  <rect x="352" y="282" width="24" height="112" rx="12" fill="#B07A3C"/>
+  <rect x="520" y="282" width="24" height="112" rx="12" fill="#B07A3C"/>
+
+  <!-- 꼬리 -->
+  <path d="M572 238 C 592 250, 598 280, 590 312" stroke="#B07A3C" stroke-width="10" fill="none" stroke-linecap="round"/>
+
+  <!-- 몸통 -->
+  <ellipse cx="440" cy="250" rx="150" ry="62" fill="#D6A35E"/>
+
+  <!-- 목과 머리 -->
+  <path d="M318 236 C 262 258, 238 238, 226 196 C 218 168, 212 146, 200 132" stroke="#D6A35E" stroke-width="50" fill="none" stroke-linecap="round"/>
+  <ellipse cx="172" cy="126" rx="48" ry="27" fill="#D6A35E" transform="rotate(-8 172 126)"/>
+  <path d="M190 106 L 200 82 L 210 108 Z" fill="#B07A3C"/>
+  <circle cx="178" cy="114" r="6" fill="#3A2614"/>
+  <path d="M128 138 C 136 142, 144 142, 150 138" stroke="#3A2614" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+  <!-- 앞쪽 다리 -->
+  <rect x="330" y="282" width="26" height="114" rx="13" fill="#D6A35E"/>
+  <rect x="498" y="282" width="26" height="114" rx="13" fill="#D6A35E"/>
+  <rect x="328" y="384" width="30" height="12" rx="6" fill="#8A5A2B"/>
+  <rect x="496" y="384" width="30" height="12" rx="6" fill="#8A5A2B"/>
+
+  <!-- 혹 (물음표로 강조) -->
+  <path d="M352 212 C 368 130, 420 98, 462 100 C 508 102, 540 150, 548 212 Z" fill="#D6A35E"/>
+  <path d="M368 206 C 382 142, 424 116, 460 118 C 498 120, 524 158, 532 206" stroke="#7A4E22" stroke-width="5" stroke-dasharray="14 10" fill="none" stroke-linecap="round"/>
+  <path d="M430 150 C 430 124, 476 122, 476 150 C 476 170, 453 170, 453 188" stroke="#7A4E22" stroke-width="13" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="453" cy="208" r="8" fill="#7A4E22"/>
+</svg>
