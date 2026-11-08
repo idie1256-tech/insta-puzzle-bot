@@ -1,16 +1,15 @@
 name: 인스타 자동 게시
 
+# 자동 예약 게시는 꺼져 있습니다. 검토를 마친 문제만 번호를 지정해 직접 실행합니다.
+# 다시 매일 자동으로 올리려면 아래 주석을 풀면 됩니다 (UTC 기준, 한국 시간 20:07 = "7 11 * * *").
+#  schedule:
+#    - cron: "7 11 * * *"
 on:
-  schedule:
-    # 매일 한국 시간 20:07에 실행 (GitHub는 UTC 기준이라 9시간을 뺀 11:07로 적음)
-    # 정각은 GitHub 서버가 붐벼 늦어질 수 있어 7분으로 설정
-    - cron: "7 11 * * *"
   workflow_dispatch:
     inputs:
       puzzle_id:
-        description: "특정 번호의 문제만 올리기 (비우면 다음 차례 문제)"
-        required: false
-        default: ""
+        description: "올릴 문제 번호 (검토를 마친 문제만)"
+        required: true
       dry_run:
         description: "체크하면 이미지만 만들고 실제 게시는 하지 않음 (연습용)"
         type: boolean
@@ -46,9 +45,11 @@ jobs:
       - name: 토큰과 계정 연결 확인
         run: python scripts/publish.py --check
 
-      - name: 다음 문제 고르기
+      - name: 올릴 문제 확인
         id: pick
-        run: python scripts/post_queue.py next "${{ inputs.puzzle_id }}"
+        run: |
+          if [ -z "${{ inputs.puzzle_id }}" ]; then echo "올릴 문제 번호를 입력해주세요."; exit 1; fi
+          python scripts/post_queue.py next "${{ inputs.puzzle_id }}"
 
       - name: 이미지 만들기
         run: python scripts/render.py --id ${{ steps.pick.outputs.id }}
