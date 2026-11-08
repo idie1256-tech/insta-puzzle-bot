@@ -1,19 +1,23 @@
 name: 인스타 자동 게시
 
 # 자동 예약 게시는 꺼져 있습니다. 검토를 마친 문제만 번호를 지정해 직접 실행합니다.
-# 다시 매일 자동으로 올리려면 아래 주석을 풀면 됩니다 (UTC 기준, 한국 시간 20:07 = "7 11 * * *").
-#  schedule:
-#    - cron: "7 11 * * *"
+# 다시 매일 자동으로 올리려면 on: 아래에 schedule을 추가하세요 (UTC 기준, 한국 시간 20:07 = "7 11 * * *").
 on:
   workflow_dispatch:
     inputs:
       puzzle_id:
-        description: "올릴 문제 번호 (검토를 마친 문제만)"
+        description: "문제 번호 (검토를 마친 문제만)"
         required: true
-      dry_run:
-        description: "체크하면 이미지만 만들고 실제 게시는 하지 않음 (연습용)"
-        type: boolean
-        default: false
+      format:
+        description: "게시 형식: reel(릴스 영상) / feed(피드 이미지)"
+        type: choice
+        options: [reel, feed]
+        default: reel
+      mode:
+        description: "preview=파일만 만들기 / upload-test=인스타 업로드·처리까지만(게시 안 함) / publish=실제 게시"
+        type: choice
+        options: [preview, upload-test, publish]
+        default: preview
 
 permissions:
   contents: write
@@ -25,7 +29,7 @@ concurrency:
 jobs:
   post:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     env:
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
@@ -41,31 +45,37 @@ jobs:
         run: |
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
+          command -v ffmpeg || (sudo apt-get update && sudo apt-get install -y ffmpeg)
 
       - name: 토큰과 계정 연결 확인
         run: python scripts/publish.py --check
 
-      - name: 올릴 문제 확인
+      - name: 문제 확인
         id: pick
-        run: |
-          if [ -z "${{ inputs.puzzle_id }}" ]; then echo "올릴 문제 번호를 입력해주세요."; exit 1; fi
-          python scripts/post_queue.py next "${{ inputs.puzzle_id }}"
+        run: python scripts/post_queue.py check "${{ inputs.puzzle_id }}" ${{ inputs.mode == 'publish' && '--publish' || '' }}
 
-      - name: 이미지 만들기
-        run: python scripts/render.py --id ${{ steps.pick.outputs.id }}
+      - name: 게시물 파일 만들기
+        run: python scripts/render.py --id ${{ steps.pick.outputs.id }} --format ${{ inputs.format }}
 
-      - name: (연습) 이미지를 결과물로 저장
-        if: ${{ inputs.dry_run }}
+      - name: 만든 파일을 결과물로 저장 (Artifacts에서 내려받기)
         uses: actions/upload-artifact@v4
         with:
-          name: preview-${{ steps.pick.outputs.name }}
+          name: ${{ inputs.format }}-${{ steps.pick.outputs.name }}
           path: |
-            output/${{ steps.pick.outputs.name }}.jpg
-            output/${{ steps.pick.outputs.name }}.txt
+            output/${{ steps.pick.outputs.name }}.*
+            output/${{ steps.pick.outputs.name }}_reel.png
 
-      - name: 이미지를 저장소에 올려 공개 주소 만들기
+      - name: 릴스 업로드 테스트 (게시 안 함)
+        if: ${{ inputs.format == 'reel' && inputs.mode == 'upload-test' }}
+        run: python scripts/publish.py --id ${{ steps.pick.outputs.id }} --video output/${{ steps.pick.outputs.name }}.mp4 --no-publish
+
+      - name: 릴스 게시
+        if: ${{ inputs.format == 'reel' && inputs.mode == 'publish' }}
+        run: python scripts/publish.py --id ${{ steps.pick.outputs.id }} --video output/${{ steps.pick.outputs.name }}.mp4
+
+      - name: 피드 이미지를 저장소에 올려 공개 주소 만들기
         id: upload
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.format == 'feed' && inputs.mode != 'preview' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -75,17 +85,20 @@ jobs:
           git push
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: 인스타에 게시
-        if: ${{ !inputs.dry_run }}
+      - name: 피드 게시 (업로드 테스트면 게시 직전까지만)
+        if: ${{ inputs.format == 'feed' && inputs.mode != 'preview' }}
         run: >
           python scripts/publish.py
           --id ${{ steps.pick.outputs.id }}
           --image-url "https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.upload.outputs.sha }}/output/${{ steps.pick.outputs.name }}.jpg"
+          ${{ inputs.mode == 'upload-test' && '--no-publish' || '' }}
 
       - name: 게시 기록 저장
-        if: ${{ !inputs.dry_run }}
+        if: ${{ inputs.mode == 'publish' }}
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add state/posted.json
-          git commit -m "게시 완료: ${{ steps.pick.outputs.id }}번 문제"
+          git commit -m "게시 완료: ${{ steps.pick.outputs.id }}번 문제 (${{ inputs.format }})"
           git pull --rebase
           git push

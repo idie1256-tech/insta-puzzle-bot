@@ -9,8 +9,10 @@
 |---|---|
 | `puzzles/puzzles.yaml` | 문제 목록 (제목, 단서, 힌트, 정답, 캡션) |
 | `config.yaml` | 계정 아이디, 포인트 색, 하단 문구 |
-| `templates/card.html.j2` | 이미지 디자인 (1080×1350) |
-| `scripts/render.py` | 문제 → JPEG 이미지 + 캡션 |
+| `templates/reel.html.j2` | 릴스 화면 디자인 (1080×1920, 후킹 문구 + 문제 + 카운트다운) |
+| `templates/card.html.j2` | 피드 이미지 디자인 (1080×1350) |
+| `assets/music/tick_tock.m4a` | 직접 합성한 저작권 없는 배경음 (`scripts/make_music.py`로 다시 만들 수 있음) |
+| `scripts/render.py` | 문제 → 릴스 MP4 또는 피드 JPEG + 캡션 |
 | `scripts/post_queue.py` | 다음에 올릴 문제 고르기 |
 | `scripts/publish.py` | 인스타 API로 게시 |
 | `state/posted.json` | 게시 기록 (자동 갱신, 직접 수정하지 마세요) |
@@ -33,8 +35,22 @@
 ## 게시하기
 
 **Actions → 인스타 자동 게시 → Run workflow**
-- `puzzle_id`에 올릴 문제 번호를 넣습니다. 이미 올린 문제는 중복 게시를 막기 위해 거부합니다.
-- 연습 체크박스를 켜면 게시하지 않고 이미지만 만들어 결과물(Artifacts)로 받을 수 있습니다.
+
+| 입력 | 설명 |
+|---|---|
+| `puzzle_id` | 올릴 문제 번호 |
+| `format` | `reel`(릴스 영상, 기본) 또는 `feed`(피드 이미지) |
+| `mode` | `preview` 파일만 만들기 → `upload-test` 인스타 업로드·처리까지만(게시 안 함) → `publish` 실제 게시 |
+
+- 만든 파일은 실행 결과 화면 아래 **Artifacts**에서 내려받아 확인할 수 있습니다.
+- `publish`에서 이미 올린 번호를 넣으면 중복 게시를 막기 위해 거부합니다.
+
+## 릴스
+
+- 9초 동안 문제를 보여주고 아래 '생각할 시간' 막대가 줄어듭니다. 시간은 `config.yaml`의 `reel_seconds`, 문제별 `seconds`로 바꿉니다.
+- 맨 위 큰 문구는 문제의 `hook` 항목입니다. 없으면 제목이 들어갑니다.
+- API로는 인스타 음악 라이브러리 곡을 붙일 수 없어 배경음을 영상에 직접 넣습니다. 다른 무료 음원을 쓰려면 `assets/music/`에 넣고 `config.yaml`의 `reel_music`을 바꿉니다.
+- 릴스 화면 위·아래와 오른쪽은 앱 버튼에 가려지므로, 내용이 아래쪽 안전 영역을 넘으면 만들기 단계에서 오류로 알려줍니다.
 
 ## 매일 자동 게시를 다시 켜려면
 

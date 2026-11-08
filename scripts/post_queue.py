@@ -1,9 +1,9 @@
-"""게시 순서 관리: 아직 올리지 않은 문제 중 다음 차례를 고른다.
+"""게시 순서 관리.
 
 사용법
-  python scripts/post_queue.py next        # 다음 차례 문제 번호
-  python scripts/post_queue.py next 5      # 5번을 지정 (이미 올린 문제면 중단)
-  python scripts/post_queue.py status      # 전체 현황
+  python scripts/post_queue.py status              # 전체 현황
+  python scripts/post_queue.py check 5             # 5번 문제가 있는지 확인 (미리보기·테스트용)
+  python scripts/post_queue.py check 5 --publish   # 실제 게시용: 이미 올린 문제면 중단
 """
 import json
 import os
@@ -28,16 +28,15 @@ def load_posted():
 
 
 def emit(pid):
-    name = f"{pid:03d}"
-    print(f"다음 게시: {pid}번 문제")
     out = os.environ.get("GITHUB_OUTPUT")
     if out:
         with open(out, "a", encoding="utf-8") as f:
-            f.write(f"id={pid}\nname={name}\n")
+            f.write(f"id={pid}\nname={pid:03d}\n")
 
 
 def main():
-    cmd = sys.argv[1] if len(sys.argv) > 1 else "status"
+    args = sys.argv[1:]
+    cmd = args[0] if args else "status"
     puzzles = load_puzzles()
     posted_ids = {p["id"] for p in load_posted()}
     waiting = [p["id"] for p in puzzles if p["id"] not in posted_ids]
@@ -47,20 +46,16 @@ def main():
         print("대기 중:", ", ".join(map(str, waiting)) or "없음")
         return
 
-    if cmd == "next":
-        if len(sys.argv) > 2 and sys.argv[2].strip():
-            pid = int(sys.argv[2])
-            if pid not in {p["id"] for p in puzzles}:
-                sys.exit(f"{pid}번 문제가 puzzles.yaml에 없습니다.")
-            if pid in posted_ids:
-                sys.exit(f"{pid}번 문제는 이미 게시했습니다. 중복 게시를 막기 위해 중단합니다.")
-            emit(pid)
-            return
-        if not waiting:
-            sys.exit("게시할 문제가 남아 있지 않습니다. puzzles/puzzles.yaml에 새 문제를 추가해주세요.")
-        if len(waiting) <= 2:
-            print(f"::warning::대기 중인 문제가 {len(waiting)}개뿐입니다. 새 문제를 추가해주세요.")
-        emit(waiting[0])
+    if cmd == "check":
+        if len(args) < 2 or not args[1].strip():
+            sys.exit("문제 번호를 입력해주세요.")
+        pid = int(args[1])
+        if pid not in {p["id"] for p in puzzles}:
+            sys.exit(f"{pid}번 문제가 puzzles.yaml에 없습니다.")
+        if "--publish" in args and pid in posted_ids:
+            sys.exit(f"{pid}번 문제는 이미 게시했습니다. 중복 게시를 막기 위해 중단합니다.")
+        print(f"{pid}번 문제 확인")
+        emit(pid)
         return
 
     sys.exit(f"알 수 없는 명령: {cmd}")

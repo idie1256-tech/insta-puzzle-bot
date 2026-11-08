@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>창의력 문제 No.{{ "%02d"|format(p.id) }} 릴스</title>
+{% for href in font_links %}<link rel="stylesheet" href="{{ href }}">
+{% endfor %}
+<style>
+:root { --accent: {{ accent }}; --bg: #0F1B2D; --panel: #16253B; --line: #2A3B55; --text: #F5F3EE; --muted: #A9B4C6; }
+html, body { margin: 0; background: var(--bg); }
+/* 릴스 화면은 위(약 220px)와 아래(약 380px), 오른쪽 버튼 영역이 앱 UI에 가려진다.
+   핵심 내용은 #safe 안(위 230px ~ 아래 1560px)에 둔다. */
+.reel { width: 1080px; height: 1920px; box-sizing: border-box; padding: 230px 96px 0; background: var(--bg); color: var(--text);
+        font-family: 'Noto Sans KR', sans-serif; overflow: hidden; }
+.display { font-family: 'Black Han Sans', 'Noto Sans KR', sans-serif; font-weight: 400; }
+#safe { display: flex; flex-direction: column; justify-content: center; min-height: 1330px; }
+
+.top { display: flex; justify-content: space-between; align-items: center; }
+.badge { padding: 10px 26px; border: 2px solid var(--accent); border-radius: 999px; font-size: 30px; font-weight: 700; color: var(--accent); }
+.level { font-size: 30px; font-weight: 500; color: var(--muted); }
+.hook { margin-top: 40px; text-align: center; font-size: 84px; line-height: 1.15; color: var(--accent); word-break: keep-all; white-space: pre-line; }
+.title { margin-top: 18px; text-align: center; font-size: 46px; font-weight: 900; }
+.hint { margin-top: 14px; text-align: center; font-size: 32px; font-weight: 500; color: var(--muted); }
+
+.slots { margin-top: 32px; display: flex; justify-content: center; gap: 20px; }
+.slot { width: 96px; height: 110px; box-sizing: border-box; border: 3px solid var(--accent); border-radius: 18px;
+        display: flex; align-items: center; justify-content: center; font-size: 66px; color: var(--accent); }
+.clues { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.clue { display: flex; align-items: center; gap: 28px; height: 100px; padding: 0 26px; background: var(--panel); border-radius: 20px; }
+.digits { display: flex; gap: 10px; flex-shrink: 0; }
+.digit { width: 68px; height: 78px; box-sizing: border-box; border: 2px solid var(--line); border-radius: 12px; background: var(--bg);
+         display: flex; align-items: center; justify-content: center; font-size: 46px; font-weight: 900; }
+.clue-text { font-size: 32px; font-weight: 500; word-break: keep-all; }
+
+.seq { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.term { height: 100px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: var(--panel);
+        border-radius: 22px; font-size: 72px; font-weight: 900; letter-spacing: .14em; }
+.term.q { background: transparent; border: 3px dashed var(--accent); color: var(--accent); font-size: 80px; letter-spacing: 0; }
+
+.rows { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
+.row { min-height: 108px; box-sizing: border-box; padding: 14px 30px; display: flex; align-items: center; justify-content: center;
+       background: var(--panel); border-radius: 22px; font-size: 58px; font-weight: 900; text-align: center; }
+.question { margin-top: 30px; text-align: center; font-size: 110px; line-height: 1.1; }
+.question .q { color: var(--accent); }
+
+.timer { margin-top: 40px; }
+.timer-label { display: flex; justify-content: space-between; font-size: 28px; font-weight: 700; color: var(--muted); margin-bottom: 12px; }
+#timer-track { height: 24px; border-radius: 12px; background: #22324A; }
+.cta { margin-top: 28px; text-align: center; font-size: 44px; color: var(--text); }
+.cta b { color: var(--accent); font-weight: 400; }
+</style>
+</head>
+<body>
+<div class="reel" id="reel">
+ <div id="safe">
+  <div class="top">
+    <div class="badge">창의력 문제 No.{{ "%02d"|format(p.id) }}</div>
+    <div class="level">난이도 · {{ p.difficulty }}</div>
+  </div>
+
+  <div class="hook display">{{ p.hook or p.title }}</div>
+  {% if p.hook %}<div class="title">{{ p.title }}</div>{% endif %}
+  {% if p.hint %}<div class="hint">힌트: {{ p.hint }}</div>{% endif %}
+
+  {% if p.type == "lock" %}
+  <div class="slots">{% for _ in p.clues[0].digits %}<div class="slot display">?</div>{% endfor %}</div>
+  <div class="clues">
+    {% for c in p.clues %}
+    <div class="clue">
+      <div class="digits">{% for d in c.digits %}<div class="digit">{{ d }}</div>{% endfor %}</div>
+      <div class="clue-text">{{ c.text }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% elif p.type == "sequence" %}
+  <div class="seq">
+    {% for t in p.terms %}<div class="term">{{ t }}</div>{% endfor %}
+    <div class="term q display">?</div>
+  </div>
+  {% elif p.type == "rows" %}
+  <div class="rows">{% for r in p.rows %}<div class="row">{{ r }}</div>{% endfor %}</div>
+  {% if p.question %}<div class="question display">{{ p.question }}<span class="q">?</span></div>{% endif %}
+  {% endif %}
+
+  <div class="timer">
+    <div class="timer-label"><span>생각할 시간</span><span>{{ seconds }}초</span></div>
+    <div id="timer-track"></div>
+  </div>
+  <div class="cta display" id="safe-end">정답은 <b>댓글</b>로!</div>
+ </div>
+</div>
+</body>
+</html>
