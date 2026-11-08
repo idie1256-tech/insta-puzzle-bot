@@ -1,0 +1,90 @@
+name: 인스타 자동 게시
+
+on:
+  schedule:
+    # 매일 한국 시간 20:07에 실행 (GitHub는 UTC 기준이라 9시간을 뺀 11:07로 적음)
+    # 정각은 GitHub 서버가 붐벼 늦어질 수 있어 7분으로 설정
+    - cron: "7 11 * * *"
+  workflow_dispatch:
+    inputs:
+      puzzle_id:
+        description: "특정 번호의 문제만 올리기 (비우면 다음 차례 문제)"
+        required: false
+        default: ""
+      dry_run:
+        description: "체크하면 이미지만 만들고 실제 게시는 하지 않음 (연습용)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: instagram-post
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+      IG_USER_ID: ${{ secrets.IG_USER_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: 프로그램 설치
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: 토큰과 계정 연결 확인
+        run: python scripts/publish.py --check
+
+      - name: 다음 문제 고르기
+        id: pick
+        run: python scripts/post_queue.py next "${{ inputs.puzzle_id }}"
+
+      - name: 이미지 만들기
+        run: python scripts/render.py --id ${{ steps.pick.outputs.id }}
+
+      - name: (연습) 이미지를 결과물로 저장
+        if: ${{ inputs.dry_run }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: preview-${{ steps.pick.outputs.name }}
+          path: |
+            output/${{ steps.pick.outputs.name }}.jpg
+            output/${{ steps.pick.outputs.name }}.txt
+
+      - name: 이미지를 저장소에 올려 공개 주소 만들기
+        id: upload
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f "output/${{ steps.pick.outputs.name }}.jpg"
+          git commit -m "이미지: ${{ steps.pick.outputs.id }}번 문제" || echo "이미 올라간 이미지"
+          git pull --rebase
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: 인스타에 게시
+        if: ${{ !inputs.dry_run }}
+        run: >
+          python scripts/publish.py
+          --id ${{ steps.pick.outputs.id }}
+          --image-url "https://raw.githubusercontent.com/${{ github.repository }}/${{ steps.upload.outputs.sha }}/output/${{ steps.pick.outputs.name }}.jpg"
+
+      - name: 게시 기록 저장
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git add state/posted.json
+          git commit -m "게시 완료: ${{ steps.pick.outputs.id }}번 문제"
+          git pull --rebase
+          git push

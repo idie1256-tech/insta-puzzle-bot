@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>창의력 문제 No.{{ "%02d"|format(p.id) }}</title>
+{% for href in font_links %}<link rel="stylesheet" href="{{ href }}">
+{% endfor %}
+<style>
+:root { --accent: {{ cfg.accent }}; --bg: #0F1B2D; --panel: #16253B; --line: #2A3B55; --text: #F5F3EE; --muted: #A9B4C6; --op: #8FA0B8; }
+html, body { margin: 0; background: var(--bg); }
+.card { width: 1080px; height: 1350px; box-sizing: border-box; padding: 80px 88px; background: var(--bg); color: var(--text);
+        font-family: 'Noto Sans KR', sans-serif; display: flex; flex-direction: column; overflow: hidden; }
+.display { font-family: 'Black Han Sans', 'Noto Sans KR', sans-serif; font-weight: 400; }
+
+.top { display: flex; justify-content: space-between; align-items: center; }
+.badge { padding: 10px 26px; border: 2px solid var(--accent); border-radius: 999px; font-size: 28px; font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+.level { font-size: 28px; font-weight: 500; color: var(--muted); }
+.title { margin-top: 44px; text-align: center; font-size: 92px; line-height: 1.05; }
+.subtitle { margin-top: 10px; text-align: center; font-size: 34px; font-weight: 500; color: var(--muted); }
+
+/* lock */
+.slots { margin-top: 32px; display: flex; justify-content: center; gap: 20px; }
+.slot { width: 104px; height: 120px; box-sizing: border-box; border: 3px solid var(--accent); border-radius: 18px;
+        display: flex; align-items: center; justify-content: center; font-size: 72px; color: var(--accent); }
+.clues { margin-top: 40px; display: flex; flex-direction: column; gap: 12px; }
+.clue { display: flex; align-items: center; gap: 32px; height: 104px; padding: 0 28px; background: var(--panel); border-radius: 20px; }
+.digits { display: flex; gap: 10px; flex-shrink: 0; }
+.digit { width: 72px; height: 80px; box-sizing: border-box; border: 2px solid var(--line); border-radius: 12px; background: var(--bg);
+         display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 900; }
+.clue-text { font-size: 32px; font-weight: 500; }
+
+/* sequence */
+.seq { margin-top: 40px; display: flex; flex-direction: column; gap: 14px; }
+.term { height: 112px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; background: var(--panel);
+        border-radius: 22px; font-size: 76px; font-weight: 900; letter-spacing: .14em; }
+.term.q { background: transparent; border: 3px dashed var(--accent); color: var(--accent); font-size: 84px; letter-spacing: 0; }
+
+/* rows: 식이나 문장을 줄마다 나열 */
+.rows { margin-top: 40px; display: flex; flex-direction: column; gap: 16px; }
+.row { min-height: 112px; box-sizing: border-box; padding: 16px 32px; display: flex; align-items: center; justify-content: center;
+       background: var(--panel); border-radius: 22px; font-size: 60px; font-weight: 900; text-align: center; }
+.question { margin-top: 40px; text-align: center; font-size: 120px; line-height: 1.1; }
+.question .q { color: var(--accent); }
+
+.spacer { flex-grow: 1; }
+.hint { margin-top: 28px; display: flex; align-items: center; gap: 24px; padding: 26px 36px; border: 2px solid var(--line); border-radius: 24px; }
+.hint-label { flex-shrink: 0; padding: 6px 16px; background: #22324A; border-radius: 10px; font-size: 26px; font-weight: 900; color: var(--accent); letter-spacing: .08em; }
+.hint-text { font-size: 34px; font-weight: 500; }
+.footer { margin-top: 28px; display: flex; justify-content: space-between; align-items: center; font-size: 28px; color: var(--muted); }
+.handle { font-weight: 700; color: var(--text); }
+</style>
+</head>
+<body>
+<div class="card" id="card">
+  <div class="top">
+    <div class="badge">창의력 문제 No.{{ "%02d"|format(p.id) }}</div>
+    <div class="level">난이도 · {{ p.difficulty }}</div>
+  </div>
+
+  <div class="title display">{{ p.title }}</div>
+  {% if p.subtitle %}<div class="subtitle">{{ p.subtitle }}</div>{% endif %}
+
+  {% if p.type == "lock" %}
+  <div class="slots">
+    {% for _ in p.clues[0].digits %}<div class="slot display">?</div>{% endfor %}
+  </div>
+  <div class="clues">
+    {% for c in p.clues %}
+    <div class="clue">
+      <div class="digits">{% for d in c.digits %}<div class="digit">{{ d }}</div>{% endfor %}</div>
+      <div class="clue-text">{{ c.text }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% elif p.type == "sequence" %}
+  <div class="seq">
+    {% for t in p.terms %}<div class="term">{{ t }}</div>{% endfor %}
+    <div class="term q display">?</div>
+  </div>
+
+  {% elif p.type == "rows" %}
+  <div class="rows">
+    {% for r in p.rows %}<div class="row">{{ r }}</div>{% endfor %}
+  </div>
+  {% if p.question %}<div class="question display">{{ p.question }}<span class="q">?</span></div>{% endif %}
+  {% endif %}
+
+  <div class="spacer"></div>
+
+  {% if p.hint %}
+  <div class="hint">
+    <div class="hint-label">HINT</div>
+    <div class="hint-text">{{ p.hint }}</div>
+  </div>
+  {% endif %}
+
+  <div class="footer">
+    <div>{{ cfg.footer_text }}</div>
+    <div class="handle">{{ cfg.account_handle }}</div>
+  </div>
+</div>
+</body>
+</html>
