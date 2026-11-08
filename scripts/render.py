@@ -114,7 +114,8 @@ def render_feed(page, env, p, cfg, ctx, out, name):
 
 def render_reel(page, env, p, cfg, ctx, out, name):
     seconds = int(p.get("seconds") or cfg.get("reel_seconds", 9))
-    html = env.get_template("reel.html.j2").render(p=p, seconds=seconds, **ctx)
+    timer = bool(cfg.get("reel_timer", False))
+    html = env.get_template("reel.html.j2").render(p=p, seconds=seconds, timer=timer, **ctx)
     open_page(page, html, out / "html" / f"{name}_reel.html", REEL)
     o = overflow(page, "reel")
     if o[0] > 0 or o[1] > 0:
@@ -125,30 +126,33 @@ def render_reel(page, env, p, cfg, ctx, out, name):
 
     base = out / f"{name}_reel.png"
     page.locator("#reel").screenshot(path=str(base))
-    box = page.locator("#timer-track").bounding_box()
-    x, y, w, h = (round(box[k]) for k in ("x", "y", "width", "height"))
 
-    frames = seconds * FPS
     music = ROOT / "assets" / "music" / cfg.get("reel_music", "tick_tock.m4a")
     with tempfile.TemporaryDirectory() as tmp:
-        # 카운트다운 막대: 가득 찬 상태에서 0까지 줄어드는 프레임
-        for i in range(frames):
-            img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
-            fill = round(w * (1 - i / (frames - 1)))
-            if fill > 0:
-                ImageDraw.Draw(img).rounded_rectangle(
-                    (0, 0, max(fill, h) - 1, h - 1), radius=h // 2, fill=cfg.get("accent", "#FFC93C"))
-            img.save(f"{tmp}/{i:04d}.png")
-        cmd = ["ffmpeg", "-y", "-loglevel", "error",
-               "-loop", "1", "-framerate", str(FPS), "-i", str(base),
-               "-framerate", str(FPS), "-i", f"{tmp}/%04d.png"]
+        cmd = ["ffmpeg", "-y", "-loglevel", "error", "-loop", "1", "-framerate", str(FPS), "-i", str(base)]
+        if timer:
+            # 카운트다운 막대: 가득 찬 상태에서 0까지 줄어드는 프레임을 겹친다
+            box = page.locator("#timer-track").bounding_box()
+            x, y, w, h = (round(box[k]) for k in ("x", "y", "width", "height"))
+            frames = seconds * FPS
+            for i in range(frames):
+                img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+                fill = round(w * (1 - i / (frames - 1)))
+                if fill > 0:
+                    ImageDraw.Draw(img).rounded_rectangle(
+                        (0, 0, max(fill, h) - 1, h - 1), radius=h // 2, fill=cfg.get("accent", "#FFC93C"))
+                img.save(f"{tmp}/{i:04d}.png")
+            cmd += ["-framerate", str(FPS), "-i", f"{tmp}/%04d.png"]
+            video, audio_in = f"[0:v][1:v]overlay={x}:{y}:shortest=1,format=yuv420p[v]", 2
+        else:
+            # 정지 화면 + 배경음
+            video, audio_in = "[0:v]format=yuv420p[v]", 1
         if music.exists():
             cmd += ["-stream_loop", "-1", "-i", str(music)]
         else:
             cmd += ["-f", "lavfi", "-i", "anullsrc=r=44100:cl=stereo"]
         cmd += ["-filter_complex",
-                f"[0:v][1:v]overlay={x}:{y}:shortest=1,format=yuv420p[v];"
-                f"[2:a]volume=6dB,alimiter=limit=0.95,afade=t=out:st={seconds - 0.8}:d=0.8[a]",
+                f"{video};[{audio_in}:a]volume=6dB,alimiter=limit=0.95,afade=t=out:st={seconds - 0.8}:d=0.8[a]",
                 "-map", "[v]", "-map", "[a]", "-t", str(seconds),
                 "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-r", str(FPS),
                 "-c:a", "aac", "-b:a", "128k", "-ar", "44100",

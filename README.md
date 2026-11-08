@@ -9,7 +9,7 @@
 |---|---|
 | `puzzles/puzzles.yaml` | 문제 목록 (제목, 단서, 힌트, 정답, 캡션) |
 | `config.yaml` | 계정 아이디, 포인트 색, 하단 문구 |
-| `templates/reel.html.j2` | 릴스 화면 디자인 (1080×1920, 후킹 문구 + 문제 + 카운트다운) |
+| `templates/reel.html.j2` | 릴스 화면 디자인 (1080×1920, 후킹 문구 + 문제) |
 | `templates/card.html.j2` | 피드 이미지 디자인 (1080×1350) |
 | `assets/music/tick_tock.m4a` | 직접 합성한 저작권 없는 배경음 (`scripts/make_music.py`로 다시 만들 수 있음) |
 | `scripts/render.py` | 문제 → 릴스 MP4 또는 피드 JPEG + 캡션 |
@@ -47,7 +47,8 @@
 
 ## 릴스
 
-- 9초 동안 문제를 보여주고 아래 '생각할 시간' 막대가 줄어듭니다. 시간은 `config.yaml`의 `reel_seconds`, 문제별 `seconds`로 바꿉니다.
+- 문제 화면 한 장을 9초 동안 보여주고 배경음을 깝니다. 길이는 `config.yaml`의 `reel_seconds`, 문제별 `seconds`로 바꿉니다.
+- `config.yaml`의 `reel_timer`를 `true`로 바꾸면 '생각할 시간' 카운트다운 막대가 나타납니다.
 - 맨 위 큰 문구는 문제의 `hook` 항목입니다. 없으면 제목이 들어갑니다.
 - API로는 인스타 음악 라이브러리 곡을 붙일 수 없어 배경음을 영상에 직접 넣습니다. 다른 무료 음원을 쓰려면 `assets/music/`에 넣고 `config.yaml`의 `reel_music`을 바꿉니다.
 - 릴스 화면 위·아래와 오른쪽은 앱 버튼에 가려지므로, 내용이 아래쪽 안전 영역을 넘으면 만들기 단계에서 오류로 알려줍니다.
