@@ -190,7 +190,7 @@ puzzles:
     title: 낙타 혹 안에 든 것은?
     exam_period: 제3교시
     exam_label: 과학 영역
-    question: 그림을 보고 알맞은 것을 고르시오.
+    question: 낙타 혹 안에 든 것을 고르시오.
     figure: camel.svg
     choices: [물, 지방, 근육]
     answer: "② 지방"
