@@ -29,7 +29,7 @@ REEL_SAFE_BOTTOM = 1580  # 이보다 아래는 릴스 캡션·버튼에 가려�
 FPS = 30
 CAPTION_MAX = 2200
 HASHTAG_MAX = 5  # 2025년 12월부터 인스타 해시태그는 게시물당 5개까지
-REQUIRED = {"lock": ["clues"], "sequence": ["terms"], "rows": ["rows"]}
+REQUIRED = {"lock": ["clues"], "sequence": ["terms"], "rows": ["rows"], "exam": ["question", "exam_label"]}
 
 
 def load_yaml(path):
@@ -77,8 +77,11 @@ def font_stylesheets():
             (local / "noto-sans-kr" / "700.css").as_uri(),
             (local / "noto-sans-kr" / "900.css").as_uri(),
             (local / "black-han-sans" / "400.css").as_uri(),
+            (local / "nanum-myeongjo" / "700.css").as_uri(),
+            (local / "nanum-myeongjo" / "800.css").as_uri(),
         ]
-    return ["https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@500;700;900&display=block"]
+    return ["https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Nanum+Myeongjo:wght@700;800"
+            "&family=Noto+Sans+KR:wght@500;700;900&display=block"]
 
 
 def launch(p):
@@ -190,10 +193,13 @@ def main():
         browser = launch(pw)
         page = browser.new_page(device_scale_factor=1)
         for p in puzzles:
-            for key in ("subtitle", "hint", "question", "hook"):
+            for key in ("subtitle", "hint", "question", "hook", "exam_period", "exam_no", "passage", "equations", "choices", "blank"):
                 p.setdefault(key, None)
             name = f"{p['id']:03d}"
             formats = ["reel", "feed"] if args.format == "both" else [args.format]
+            if p["type"] == "exam" and "feed" in formats:
+                print(f"[문제 {p['id']}] 시험지 형식(exam)은 릴스 전용이라 피드 이미지는 건너뜁니다.")
+                formats = [f for f in formats if f != "feed"]
             for fmt in formats:
                 err = (render_reel if fmt == "reel" else render_feed)(page, env, p, cfg, ctx, out, name)
                 if err:
