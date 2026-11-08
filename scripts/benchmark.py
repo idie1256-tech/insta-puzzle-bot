@@ -174,6 +174,9 @@ def report(top, errors, own_rows):
             lines.append(f"| {r['date']} | {r.get('puzzle_id') or ''} {r['caption_first_line'][:20]} | {r.get('views')} | {r.get('reach')} | "
                          f"{r.get('likes')} | {r.get('comments')} | {r.get('shares')} | {r.get('saved')} | "
                          f"{r.get('ig_reels_avg_watch_time')} | {r.get('reels_skip_rate')} | {r.get('follows')} |")
+        errs = {k: v for r in own_rows for k, v in (r.get("_errors") or {}).items()}
+        if errs:
+            lines += ["", "인사이트 오류:"] + [f"- {k}: {v}" for k, v in errs.items()]
         lines.append("")
     if top is not None:
         lines += ["## 다른 계정 상위 릴스 (계정 평균 대비 조회수 배수 순)", "",
