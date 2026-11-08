@@ -89,7 +89,7 @@ puzzles:
     num: 2
     type: exam
     difficulty: 하
-    hook: "'글피'는\n무슨 요일?"
+    hook: "성인 90%가\n틀리는 문제"
     title: 글피는 무슨 요일?
     exam_period: 제1교시
     exam_label: 국어 영역
