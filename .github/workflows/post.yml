@@ -33,6 +33,7 @@ jobs:
     env:
       IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
       IG_USER_ID: ${{ secrets.IG_USER_ID }}
+      PYTHONUNBUFFERED: "1"  # 진행 메시지를 바로바로 기록
     steps:
       - uses: actions/checkout@v4
 
