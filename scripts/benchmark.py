@@ -196,6 +196,7 @@ def main():
     ap.add_argument("--check", metavar="USERNAME", help="이 계정 하나로 조회 권한만 확인")
     ap.add_argument("--competitors", action="store_true")
     ap.add_argument("--own", action="store_true")
+    ap.add_argument("--probe", metavar="U1,U2,...", help="여러 아이디가 조회 가능한지 한 번에 확인")
     a = ap.parse_args()
     if a.check:
         try:
@@ -205,6 +206,18 @@ def main():
                 print(f"  - {m.get('timestamp','')[:10]} {m.get('media_product_type')} 조회 {m.get('view_count')} 좋아요 {m.get('like_count')} 댓글 {m.get('comments_count')}")
         except ApiError as e:
             sys.exit(f"✗ 다른 계정 조회 실패: {e}")
+        return
+    if a.probe:
+        found = []
+        for u in [x.strip().lstrip("@") for x in a.probe.split(",") if x.strip()]:
+            try:
+                d = get(me(), {"fields": f"business_discovery.username({u}){{username,followers_count,media_count}}"})["business_discovery"]
+                found.append((d.get("followers_count") or 0, d.get("username"), d.get("media_count")))
+            except (ApiError, KeyError):
+                pass
+        print(f"조회 가능 {len(found)}개")
+        for f, u, m in sorted(found, reverse=True):
+            print(f"FOUND {u} 팔로워 {f} 게시물 {m}")
         return
     cfg = yaml.safe_load((ROOT / "benchmarks.yaml").read_text(encoding="utf-8")) or {}
     top = errors = own_rows = None

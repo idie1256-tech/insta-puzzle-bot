@@ -8,10 +8,10 @@ on:
       mode:
         description: "check=권한 확인(아래 계정 1개) / full=benchmarks.yaml 계정 + 내 릴스 수집 / own=내 릴스만"
         type: choice
-        options: [check, full, own, diagnose]
+        options: [check, full, own, diagnose, probe]
         default: check
       username:
-        description: "check 모드에서 확인할 계정 아이디"
+        description: "check 모드: 계정 아이디 / probe 모드: 쉼표로 구분한 여러 아이디"
         required: false
         default: "bluebottle"
 
@@ -40,6 +40,9 @@ jobs:
       - name: 수집 (다른 계정 + 내 릴스)
         if: inputs.mode == 'full'
         run: python scripts/benchmark.py --competitors --own
+      - name: 여러 계정 조회 가능 여부
+        if: inputs.mode == 'probe'
+        run: python scripts/benchmark.py --probe "${{ inputs.username }}"
       - name: 토큰·계정 진단
         if: inputs.mode == 'diagnose'
         run: python scripts/diagnose.py
