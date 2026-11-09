@@ -28,7 +28,7 @@ VERSION = os.environ.get("GRAPH_API_VERSION", "v27.0")
 API = os.environ.get("GRAPH_API_BASE") or f"https://graph.facebook.com/{VERSION}"
 MEDIA_FIELDS = "id,caption,media_type,media_product_type,like_count,comments_count,view_count,timestamp,permalink,thumbnail_url"
 OWN_METRICS = ["views", "reach", "likes", "comments", "shares", "saved", "total_interactions",
-               "ig_reels_avg_watch_time", "ig_reels_video_view_total_time", "reels_skip_rate", "follows"]
+               "ig_reels_avg_watch_time", "ig_reels_video_view_total_time", "reels_skip_rate"]
 
 
 class ApiError(Exception):
