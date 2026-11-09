@@ -26,7 +26,7 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "output" / "bench"
 VERSION = os.environ.get("GRAPH_API_VERSION", "v27.0")
 API = os.environ.get("GRAPH_API_BASE") or f"https://graph.facebook.com/{VERSION}"
-MEDIA_FIELDS = "id,caption,media_type,media_product_type,like_count,comments_count,view_count,timestamp,permalink,thumbnail_url"
+MEDIA_FIELDS = "id,caption,media_type,media_product_type,like_count,comments_count,view_count,timestamp,permalink,thumbnail_url,media_url"
 OWN_METRICS = ["views", "reach", "likes", "comments", "shares", "saved", "total_interactions",
                "ig_reels_avg_watch_time", "ig_reels_video_view_total_time", "reels_skip_rate"]
 
@@ -59,7 +59,7 @@ def me():
     return uid
 
 
-def discover(username, limit=30):
+def discover(username, limit=50):
     fields = (f"business_discovery.username({username})"
               f"{{username,followers_count,media_count,media.limit({limit}){{{MEDIA_FIELDS}}}}}")
     data = get(me(), {"fields": fields})["business_discovery"]
@@ -71,38 +71,37 @@ def days_old(ts):
     return (datetime.now(timezone.utc) - t).total_seconds() / 86400
 
 
-def score_posts(account):
+def score_posts(account, max_days=365):
+    """릴스는 조회수, 사진·캐러셀은 댓글 수로 '그 계정 평소 대비 몇 배'인지 계산한다."""
+    import statistics
     followers = account.get("followers_count") or 0
     rows = []
     for m in (account.get("media") or {}).get("data", []):
-        is_reel = m.get("media_product_type") == "REELS" or m.get("media_type") == "VIDEO"
-        views = m.get("view_count")
-        if not is_reel or not views:
-            continue
         age = days_old(m["timestamp"])
-        if age < 2 or age > 90:  # 너무 최신(아직 성장 중)·너무 오래된 것은 제외
+        if age < 2 or age > max_days:
             continue
-        likes, comments = m.get("like_count"), m.get("comments_count") or 0
+        is_reel = m.get("media_product_type") == "REELS" or m.get("media_type") == "VIDEO"
+        views, likes, comments = m.get("view_count"), m.get("like_count"), m.get("comments_count") or 0
         rows.append({
-            "username": account.get("username"),
-            "followers": followers,
-            "id": m["id"],
-            "date": m["timestamp"][:10],
-            "views": views,
-            "likes": likes,
-            "comments": comments,
-            "views_per_follower": round(views / followers, 2) if followers else None,
-            "like_rate": round(likes / views, 4) if likes is not None else None,
-            "comment_rate": round(comments / views, 4),
-            "caption": (m.get("caption") or "").strip(),
-            "permalink": m.get("permalink"),
-            "thumbnail_url": m.get("thumbnail_url"),
+            "username": account.get("username"), "followers": followers, "id": m["id"],
+            "date": m["timestamp"][:10], "kind": "릴스" if is_reel else "사진",
+            "views": views, "likes": likes, "comments": comments,
+            "views_per_follower": round(views / followers, 2) if (views and followers) else None,
+            "like_rate": round(likes / views, 4) if (likes is not None and views) else None,
+            "comment_rate": round(comments / views, 4) if views else None,
+            "caption": (m.get("caption") or "").strip(), "permalink": m.get("permalink"),
+            "thumbnail_url": m.get("thumbnail_url") or m.get("media_url"),
         })
-    # 계정 평균 대비 몇 배인지 (계정 크기 차이를 줄이기 위해)
-    if rows:
-        avg = sum(r["views"] for r in rows) / len(rows)
-        for r in rows:
-            r["vs_account_avg"] = round(r["views"] / avg, 2)
+    reels = [r for r in rows if r["views"]]
+    others = [r for r in rows if not r["views"]]
+    if reels:
+        med = statistics.median(r["views"] for r in reels) or 1
+        for r in reels:
+            r["vs_account_avg"], r["metric"] = round(r["views"] / med, 2), "조회"
+    if others:
+        med = statistics.median(r["comments"] for r in others) or 1
+        for r in others:
+            r["vs_account_avg"], r["metric"] = round(r["comments"] / med, 2), "댓글"
     return rows
 
 
@@ -199,17 +198,19 @@ def report(top, errors, own_rows):
         lines.append("")
     if top is not None:
         lines += ["## 다른 계정 상위 릴스 (계정 평균 대비 조회수 배수 순)", "",
-                  "| 계정 | 날짜 | 조회 | 평균 대비 | 팔로워 대비 | 좋아요율 | 댓글율 | 캡션 첫 줄 | 화면 글자(OCR) | 링크 |", "|---|---|---|---|---|---|---|---|---|---|"]
+                  "| 계정 | 날짜 | 종류 | 조회 | 좋아요 | 댓글 | 평소 대비(기준) | 캡션 첫 줄 | 화면 글자(OCR) | 링크 |", "|---|---|---|---|---|---|---|---|---|---|"]
         for r in top:
             cap = r["caption"].split("\n")[0][:30].replace("|", "/")
-            lines.append(f"| {r['username']} | {r['date']} | {r['views']} | x{r.get('vs_account_avg')} | {r.get('views_per_follower')} | "
-                         f"{r.get('like_rate')} | {r.get('comment_rate')} | {cap} | {(r.get('screen_text') or '').replace('|', '/')} | {r['permalink']} |")
+            lines.append(f"| {r['username']} | {r['date']} | {r.get('kind')} | {r['views']} | {r.get('likes')} | {r['comments']} | x{r.get('vs_account_avg')}({r.get('metric')}) | "
+                         f"{cap} | {(r.get('screen_text') or '').replace('|', '/')} | {r['permalink']} |")
         import statistics
         allrows = json.loads((OUT / "competitors.json").read_text())["all"] if (OUT / "competitors.json").exists() else []
-        lines += ["", "## 계정별 요약 (최근 90일 릴스)", "", "| 계정 | 팔로워 | 릴스 수 | 조회 중앙값 | 최고 조회 |", "|---|---|---|---|---|"]
+        lines += ["", "## 계정별 요약 (최근 1년, 최근 50개 게시물 중)", "", "| 계정 | 팔로워 | 릴스 수 | 릴스 조회 중앙값 | 최고 조회 | 사진 수 | 사진 댓글 중앙값 |", "|---|---|---|---|---|---|---|"]
         for u in sorted({r["username"] for r in allrows}):
             rs = [r for r in allrows if r["username"] == u]
-            lines.append(f"| {u} | {rs[0]['followers']} | {len(rs)} | {int(statistics.median([r['views'] for r in rs]))} | {max(r['views'] for r in rs)} |")
+            rv = [r["views"] for r in rs if r["views"]]
+            pc = [r["comments"] for r in rs if not r["views"]]
+            lines.append(f"| {u} | {rs[0]['followers']} | {len(rv)} | {int(statistics.median(rv)) if rv else '-'} | {max(rv) if rv else '-'} | {len(pc)} | {int(statistics.median(pc)) if pc else '-'} |")
         if errors:
             lines += ["", "## 조회 실패 계정", ""] + [f"- {u}: {e}" for u, e in errors.items()]
     (OUT / "report.md").write_text("\n".join(lines) + "\n")
