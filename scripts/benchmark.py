@@ -139,6 +139,12 @@ def competitors(cfg):
             print(f"  ✗ {u}: {e}")
     rows.sort(key=lambda r: (r.get("vs_account_avg") or 0), reverse=True)
     top = rows[: cfg.get("top_n", 15)]
+    # 계정마다 최고 릴스 2개도 포함 (상위 목록에 안 들어간 계정도 보이도록)
+    seen = {r["id"] for r in top}
+    for u in {r["username"] for r in rows}:
+        for r in [x for x in rows if x["username"] == u][:2]:
+            if r["id"] not in seen:
+                top.append(r); seen.add(r["id"])
     for r in top:
         if r.get("thumbnail_url"):
             f = OUT / "thumbs" / f"{r['id']}.jpg"
@@ -198,6 +204,12 @@ def report(top, errors, own_rows):
             cap = r["caption"].split("\n")[0][:30].replace("|", "/")
             lines.append(f"| {r['username']} | {r['date']} | {r['views']} | x{r.get('vs_account_avg')} | {r.get('views_per_follower')} | "
                          f"{r.get('like_rate')} | {r.get('comment_rate')} | {cap} | {(r.get('screen_text') or '').replace('|', '/')} | {r['permalink']} |")
+        import statistics
+        allrows = json.loads((OUT / "competitors.json").read_text())["all"] if (OUT / "competitors.json").exists() else []
+        lines += ["", "## 계정별 요약 (최근 90일 릴스)", "", "| 계정 | 팔로워 | 릴스 수 | 조회 중앙값 | 최고 조회 |", "|---|---|---|---|---|"]
+        for u in sorted({r["username"] for r in allrows}):
+            rs = [r for r in allrows if r["username"] == u]
+            lines.append(f"| {u} | {rs[0]['followers']} | {len(rs)} | {int(statistics.median([r['views'] for r in rs]))} | {max(r['views'] for r in rs)} |")
         if errors:
             lines += ["", "## 조회 실패 계정", ""] + [f"- {u}: {e}" for u, e in errors.items()]
     (OUT / "report.md").write_text("\n".join(lines) + "\n")
