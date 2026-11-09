@@ -32,6 +32,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install pyyaml
+      - name: 글자 인식(OCR) 도구 설치
+        if: inputs.mode == 'full'
+        run: sudo apt-get install -y -qq tesseract-ocr tesseract-ocr-kor >/dev/null && pip install -q pytesseract pillow
       - name: 권한 확인
         if: inputs.mode == 'check'
         run: |

@@ -115,6 +115,16 @@ def download(url, path):
         return False
 
 
+def ocr(path):
+    try:
+        import pytesseract
+        from PIL import Image
+        txt = pytesseract.image_to_string(Image.open(path), lang="kor+eng")
+        return " ".join(txt.split())[:80]
+    except Exception:
+        return None
+
+
 def competitors(cfg):
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "thumbs").mkdir(exist_ok=True)
@@ -131,7 +141,10 @@ def competitors(cfg):
     top = rows[: cfg.get("top_n", 15)]
     for r in top:
         if r.get("thumbnail_url"):
-            r["thumb_file"] = f"thumbs/{r['id']}.jpg" if download(r["thumbnail_url"], OUT / "thumbs" / f"{r['id']}.jpg") else None
+            f = OUT / "thumbs" / f"{r['id']}.jpg"
+            r["thumb_file"] = f"thumbs/{r['id']}.jpg" if download(r["thumbnail_url"], f) else None
+            if r["thumb_file"]:
+                r["screen_text"] = ocr(f)
     (OUT / "competitors.json").write_text(json.dumps({"collected_at": datetime.now(timezone.utc).isoformat(),
                                                       "top": top, "all": rows, "errors": errors},
                                                      ensure_ascii=False, indent=2))
@@ -180,11 +193,11 @@ def report(top, errors, own_rows):
         lines.append("")
     if top is not None:
         lines += ["## 다른 계정 상위 릴스 (계정 평균 대비 조회수 배수 순)", "",
-                  "| 계정 | 날짜 | 조회 | 평균 대비 | 팔로워 대비 | 좋아요율 | 댓글율 | 캡션 첫 줄 | 링크 |", "|---|---|---|---|---|---|---|---|---|"]
+                  "| 계정 | 날짜 | 조회 | 평균 대비 | 팔로워 대비 | 좋아요율 | 댓글율 | 캡션 첫 줄 | 화면 글자(OCR) | 링크 |", "|---|---|---|---|---|---|---|---|---|---|"]
         for r in top:
             cap = r["caption"].split("\n")[0][:30].replace("|", "/")
             lines.append(f"| {r['username']} | {r['date']} | {r['views']} | x{r.get('vs_account_avg')} | {r.get('views_per_follower')} | "
-                         f"{r.get('like_rate')} | {r.get('comment_rate')} | {cap} | {r['permalink']} |")
+                         f"{r.get('like_rate')} | {r.get('comment_rate')} | {cap} | {(r.get('screen_text') or '').replace('|', '/')} | {r['permalink']} |")
         if errors:
             lines += ["", "## 조회 실패 계정", ""] + [f"- {u}: {e}" for u, e in errors.items()]
     (OUT / "report.md").write_text("\n".join(lines) + "\n")
