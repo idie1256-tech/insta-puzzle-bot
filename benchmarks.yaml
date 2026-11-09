@@ -1,15 +1,14 @@
 # 벤치마크할 퀴즈 계정 (비즈니스·크리에이터 계정만 조회 가능, 개인 계정은 불가)
-# @ 없이 아이디만 적는다. 2026-11-09 API로 찾은 계정들.
+# @ 없이 아이디만 적는다. 2026-11-09 강현이 인스타 '퀴즈' 검색에서 고른 계정들.
 accounts:
-  - quiz_room        # 팔로워 약 3.6만
-  - mathcince        # 수학 퀴즈, 약 5.5만
-  - iq_quiz_kr       # 한국 IQ 퀴즈, 약 1.8천
-  - iq_quiz
-  - quizaday
-  - mathspuzzles
-  - brilliantorg     # 퍼즐·교육, 약 48만
-  - puzzles          # 약 62만
-  - nytgames         # NYT 게임, 약 18만
+  - k7060814           # 팔로워 약 9.9만
+  - mseoh_0829         # 약 2.7만 (요즘 20대 97% 틀린다는 문제)
+  - eundokki12         # 약 7.8천
+  - 365brain_exercise  # 약 6.9천
+  - curionics          # 약 5.4천 (선 하나 긋기)
+  - mandoobrain        # 약 1.5천 (수학강사 두뇌퀴즈)
+  - quiz_many          # 약 1.2천 (삼각형 세기)
+  # sangsik_k 는 개인 계정이라 API 조회 불가
 
 # 보고서에 올릴 상위 릴스 개수
-top_n: 20
+top_n: 25
