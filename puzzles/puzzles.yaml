@@ -110,15 +110,16 @@ puzzles:
     type: exam
     category: 수열
     difficulty: 하
-    hook: "수학 고수도\n틀리는 문제"
+    hook: "초등학생도\n풀 수 있는 퀴즈"
     title: 12 ÷ 3 × (1 + 1) = ?
-    exam_period: 제2교시
+    exam_period: 초등 5학년
     exam_label: 수학 영역
     question: 다음 식을 계산하시오.
-    equations: ["12 ÷ 3 × (1 + 1)"]
+    question_en: "What is the correct answer?"
+    equations: ["12 ÷ 3 × (1 + 1) = ?"]
     blank: true
     answer: "8"
-    explanation: 괄호 먼저(1 + 1 = 2), 곱셈과 나눗셈은 앞에서부터 차례로 계산해요. 12 ÷ 3 = 4, 4 × 2 = 8. 곱셈을 먼저 해서 2가 나왔다면 함정에 걸린 거예요.
+    explanation: 괄호 먼저(1 + 1 = 2), 곱셈과 나눗셈은 앞에서부터 차례로 계산해요. 12 ÷ 3 = 4, 4 × 2 = 8. 곱셈을 먼저 해서 2가 나왔다면 함정에 걸린 거예요. (초등 5학년 '자연수의 혼합 계산' 규칙, 파이썬 계산으로도 8 확인)
     caption: |
       12 ÷ 3 × (1 + 1) = ?
       #퀴즈 #수학퀴즈 #계산문제 #수학논쟁 #두뇌게임
