@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" width="800" height="250">
+  <!-- 배경 -->
+  <rect width="800" height="250" fill="#FFF3D6"/>
+  <line x1="200" y1="28" x2="200" y2="222" stroke="#E6D3A8" stroke-width="3"/>
+  <line x1="400" y1="28" x2="400" y2="222" stroke="#E6D3A8" stroke-width="3"/>
+  <line x1="600" y1="28" x2="600" y2="222" stroke="#E6D3A8" stroke-width="3"/>
+
+  <!-- 1. 태양 -->
+  <g transform="translate(100 125)" stroke="#F2A20C" stroke-width="10" stroke-linecap="round">
+    <line x1="0" y1="-62" x2="0" y2="-84"/>
+    <line x1="0" y1="62" x2="0" y2="84"/>
+    <line x1="-62" y1="0" x2="-84" y2="0"/>
+    <line x1="62" y1="0" x2="84" y2="0"/>
+    <line x1="44" y1="-44" x2="59" y2="-59"/>
+    <line x1="-44" y1="-44" x2="-59" y2="-59"/>
+    <line x1="44" y1="44" x2="59" y2="59"/>
+    <line x1="-44" y1="44" x2="-59" y2="59"/>
+  </g>
+  <circle cx="100" cy="125" r="50" fill="#FFC93C" stroke="#F2A20C" stroke-width="5"/>
+
+  <!-- 2. 지구 단면 -->
+  <circle cx="300" cy="125" r="78" fill="#3D8BD9"/>
+  <path d="M262 70 C 280 60, 300 66, 296 84 C 292 98, 270 100, 262 92 C 254 86, 252 76, 262 70 Z" fill="#5DB85C"/>
+  <path d="M232 132 C 240 118, 262 120, 266 136 C 270 152, 256 170, 242 164 C 230 158, 226 144, 232 132 Z" fill="#5DB85C"/>
+  <path d="M300 125 L 300 47 A 78 78 0 0 1 378 125 Z" fill="#8B5A2B"/>
+  <path d="M300 125 L 300 53 A 72 72 0 0 1 372 125 Z" fill="#F28C28"/>
+  <path d="M300 125 L 300 83 A 42 42 0 0 1 342 125 Z" fill="#E8552B"/>
+  <path d="M300 125 L 300 103 A 22 22 0 0 1 322 125 Z" fill="#FFD54A"/>
+
+  <!-- 3. 번개 -->
+  <g fill="#7A8699">
+    <circle cx="470" cy="80" r="30"/>
+    <circle cx="505" cy="64" r="38"/>
+    <circle cx="540" cy="82" r="28"/>
+    <rect x="452" y="76" width="104" height="34" rx="17"/>
+  </g>
+  <path d="M508 104 L 478 166 L 502 166 L 486 214 L 538 146 L 512 146 L 530 104 Z" fill="#FFD23C" stroke="#E0A800" stroke-width="4" stroke-linejoin="round"/>
+
+  <!-- 4. 화산과 용암 -->
+  <path d="M612 212 L 672 98 L 728 98 L 788 212 Z" fill="#8A5A3B"/>
+  <path d="M672 98 L 728 98 L 718 116 C 708 110, 694 112, 684 118 Z" fill="#6B4229"/>
+  <path d="M680 100 C 690 92, 710 92, 720 100 L 712 112 C 706 140, 716 160, 726 212 L 708 212 C 702 170, 694 150, 700 120 C 692 132, 682 150, 672 180 L 660 176 C 668 150, 676 126, 680 100 Z" fill="#FF5A1F"/>
+  <path d="M684 96 C 694 70, 704 60, 700 38 C 716 54, 718 76, 716 96 Z" fill="#FF8A1F"/>
+  <circle cx="676" cy="54" r="7" fill="#FF8A1F"/>
+  <circle cx="726" cy="46" r="6" fill="#FF5A1F"/>
+  <rect x="604" y="212" width="192" height="14" rx="4" fill="#C9A06A"/>
+</svg>

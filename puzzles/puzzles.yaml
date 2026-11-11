@@ -249,3 +249,22 @@ puzzles:
     caption: |
       빈칸에 들어갈 올바른 말은?
       #퀴즈 #맞춤법 #어휘력 #국어퀴즈 #문해력
+
+  - id: 12
+    num: 11
+    type: exam
+    category: 상식
+    difficulty: 중
+    hook: "이거 맞추면\n친구보다 똑똑함"
+    title: 가장 뜨거운 것은?
+    exam_period: 제3교시
+    exam_label: 과학 영역
+    question: 가장 뜨거운 것을 고르시오.
+    question_en: "Which one is the hottest?"
+    figure: hottest.svg
+    choices: [태양 표면, 지구 중심, 번개, 용암]
+    answer: "③ 번개"
+    explanation: "번개가 지나가는 길의 공기는 약 3만 ℃까지 달아올라 태양 표면(약 5,500 ℃)보다 5배쯤 뜨거워요. 지구 중심(내핵)은 약 5,200 ℃로 태양 표면과 비슷하고, 용암은 1,000 ℃ 안팎이에요. (근거: 미국 기상청 NWS 'Lightning can heat the air … to 50,000°F, 5 times hotter than the surface of the sun', Vaisala·BBC Science Focus 약 30,000 K/℃, National Geographic 내핵 약 5,200 ℃)"
+    caption: |
+      태양 표면, 지구 중심, 번개, 용암 중 가장 뜨거운 것은?
+      #퀴즈 #상식퀴즈 #과학상식 #과학퀴즈 #두뇌게임
