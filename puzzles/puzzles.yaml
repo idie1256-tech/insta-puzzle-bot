@@ -288,3 +288,23 @@ puzzles:
     caption: |
       네 사람 중 거짓말쟁이는 몇 명일까?
       #퀴즈 #논리퀴즈 #추리퀴즈 #두뇌게임 #거짓말쟁이
+
+  - id: 14
+    num: 13
+    type: exam
+    category: 공간지각
+    difficulty: 중
+    hook: "친구는 못 푸는\n주사위 문제"
+    title: 주사위 3개, 맞닿은 면과 바닥 면의 눈의 합은?
+    exam_period: 제2교시
+    exam_label: 수학 영역
+    question: 주사위끼리 맞닿은 면과 바닥에 닿은 면의 눈의 수의 합을 쓰시오.
+    question_en: "Find the total number of dots on the faces touching each other and the floor."
+    figure: dice_tower.svg
+    note: "※ 마주 보는 두 면의 눈의 합은 7이에요"
+    blank: true
+    answer: "16"
+    explanation: "주사위는 윗면과 아랫면처럼 마주 보는 두 면의 합이 7이에요. 아래 두 주사위는 윗면·아랫면이 모두 가려져 7 + 7 = 14, 맨 위 주사위는 윗면이 5라서 가려진 아랫면은 7 − 5 = 2. 14 + 2 = 16. 옆면 눈은 몰라도 풀 수 있어요! (주사위 3개의 24×24×24가지 방향을 코드로 전부 확인 — 합은 언제나 21 − 맨 위 윗면)"
+    caption: |
+      주사위 3개를 쌓았을 때, 맞닿은 면과 바닥 면의 눈을 모두 더하면?
+      #퀴즈 #주사위 #공간지각 #두뇌게임 #창의력
