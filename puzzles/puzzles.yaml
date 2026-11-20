@@ -426,3 +426,23 @@ puzzles:
     caption: |
       푸딩을 몰래 먹은 범인은 누구? 네 명 중 딱 1명만 참말을 해요
       #퀴즈 #논리퀴즈 #추리퀴즈 #범인찾기 #두뇌게임
+
+  - id: 21
+    num: 20
+    type: exam
+    category: 성냥개비
+    difficulty: 중
+    hook: "10초 안에 풀면\n천재"
+    title: 성냥개비 1개만 옮겨서 5 + 7 = 19 완성하기
+    exam_period: 제2교시
+    exam_label: 수학 영역
+    question: 성냥개비 1개만 옮겨서 식을 올바르게 만드시오.
+    question_en: "Move only 1 matchstick to fix the equation."
+    figure: match_5p7e19.svg
+    note: "※ '='는 바꿀 수 없어요"
+    blank: true
+    answer: "6 + 7 = 13"
+    explanation: "오른쪽 19의 9에서 왼쪽 위 성냥을 빼면 3이 돼요(19 → 13). 그 성냥을 5의 왼쪽 아래에 붙이면 6! 6 + 7 = 13. 왼쪽 식만 고치려 하면 안 풀리고, 답 쪽에서 성냥을 가져오는 게 포인트예요. (성냥 1개 이동으로 가능한 답은 이것 하나뿐 — scripts/matchstick.py 전수 탐색, 그리고 다른 모양의 1·6·7·9와 '-' 기호 새로 만들기까지 넣은 별도 코드로 다시 확인)"
+    caption: |
+      성냥개비 1개만 옮겨서 5 + 7 = 19 를 올바른 식으로 만들어 보세요
+      #퀴즈 #성냥개비퀴즈 #두뇌게임 #창의력 #수학퀴즈
