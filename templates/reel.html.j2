@@ -107,7 +107,7 @@ html, body { margin: 0; background: var(--bg); }
     {% if p.question_en %}<div class="q-en">({{ p.question_en }})</div>{% endif %}
     {% if p.figure %}<div class="figure"><img src="{{ figure_base }}/{{ p.figure }}" alt=""></div>{% endif %}
     {% if p.passage %}<div class="passage">{{ p.passage }}</div>{% endif %}
-    {% if p.equations %}<div class="eqs">{% for e in p.equations %}<div class="eq">{{ e }}</div>{% endfor %}</div>{% endif %}
+    {% if p.equations %}<div class="eqs"{% if p.eq_align == "left" %} style="align-items: flex-start"{% endif %}>{% for e in p.equations %}<div class="eq"{% if p.eq_size %} style="font-size: {{ p.eq_size|int }}px"{% endif %}>{{ e }}</div>{% endfor %}</div>{% endif %}
     {% if p.note %}<div class="note">{{ p.note }}</div>{% endif %}
     {% if p.choices %}<div class="choices">{% for c in p.choices %}<div>{{ "①②③④⑤⑥"[loop.index0] }} {{ c }}</div>{% endfor %}</div>{% endif %}
     {% if p.blank %}<div class="blank">답: (<span></span>)</div>{% endif %}
